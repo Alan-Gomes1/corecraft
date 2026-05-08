@@ -93,6 +93,9 @@
 
           <div class="k">tx/s</div>
           <div class="v" id="sumTxPerSec">—</div>
+
+          <div class="k">último evento</div>
+          <div class="v" id="sumLastEvent">—</div>
         </div>
 
         <div class="hint">
@@ -125,16 +128,22 @@
           Confronta a melhor cadeia conhecida pelo RPC com o último bloco notificado pelo ZMQ.
         </div>
       </div>
-  
+
       <div class="card span2">
         <div class="cardHead">
           <h2>Últimos Eventos</h2>
           <span class="tag">events/latest</span>
         </div>
-        <p class="hint" style="margin:0 0 8px">Blocos</p>
-        <div class="list" id="eventBlockList"></div>
-        <p class="hint" style="margin:12px 0 8px">Transações</p>
-        <div class="list" id="eventTxList"></div>
+        <div class="events-cols">
+          <div>
+            <p class="hint" style="margin:0 0 8px">Blocos</p>
+            <div class="list" id="eventBlockList"></div>
+          </div>
+          <div>
+            <p class="hint" style="margin:0 0 8px">Transações</p>
+            <div class="list" id="eventTxList"></div>
+          </div>
+        </div>
       </div>
 
       <div class="card span2">

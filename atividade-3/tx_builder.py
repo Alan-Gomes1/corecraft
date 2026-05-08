@@ -1,14 +1,15 @@
 # tx_builder.py
 
+import os
 from decimal import Decimal, ROUND_DOWN
 
 from rpc import BitcoinRPC
-from wallet import get_utxos
+from wallet import get_utxos, get_change_address
 
 rpc = BitcoinRPC(
-    "http://127.0.0.1:58443",
-    "teste",
-    "teste"
+    os.getenv("BITCOIN_RPC_URL",  "http://127.0.0.1:38332"),
+    os.getenv("BITCOIN_RPC_USER", "teste"),
+    os.getenv("BITCOIN_RPC_PASS", "teste"),
 )
 
 SAT = Decimal("0.00000001")
@@ -22,11 +23,11 @@ def btc(value) -> Decimal:
     return Decimal(str(value)).quantize(SAT, rounding=ROUND_DOWN)
 
 
-def build_transaction(to_address: str, amount_btc: float) -> str:
+def build_transaction(to_address: str, amount_btc: float, wallet_name: str) -> str:
     """
-    Constrói uma transação raw 
+    Constrói uma transação raw usando a wallet especificada.
     A lógica é manual no backend:
-    - consulta UTXOs
+    - consulta UTXOs da wallet
     - seleciona inputs
     - calcula fee fixa
     - calcula troco
@@ -43,7 +44,7 @@ def build_transaction(to_address: str, amount_btc: float) -> str:
 
     target = amount + fee
 
-    utxos = get_utxos()
+    utxos = get_utxos(wallet_name)
 
     if not utxos:
         raise Exception("Nenhum UTXO disponível (listunspent vazio)")
@@ -86,7 +87,7 @@ def build_transaction(to_address: str, amount_btc: float) -> str:
     dust_like_threshold = btc("0.00001")
 
     if change >= dust_like_threshold:
-        change_address = rpc.call("getrawchangeaddress")
+        change_address = get_change_address(wallet_name)
         outputs.append({
             change_address: float(change)
         })
@@ -95,6 +96,7 @@ def build_transaction(to_address: str, amount_btc: float) -> str:
         change = btc("0")
 
     print("TX build:")
+    print(" - wallet:", wallet_name)
     print(" - inputs:", inputs)
     print(" - total_in:", f"{total_in:.8f}")
     print(" - amount:", f"{amount:.8f}")

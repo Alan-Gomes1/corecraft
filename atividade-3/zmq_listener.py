@@ -1,25 +1,28 @@
 # zmq_listener.py
 
+import os
 import zmq
 import threading
 from state import state
 from rpc import BitcoinRPC
 
-rpc = BitcoinRPC(
-    "http://127.0.0.1:58443",
-    "teste",
-    "teste"
-)
+BITCOIN_RPC_URL  = os.getenv("BITCOIN_RPC_URL",  "http://127.0.0.1:38332")
+BITCOIN_RPC_USER = os.getenv("BITCOIN_RPC_USER", "teste")
+BITCOIN_RPC_PASS = os.getenv("BITCOIN_RPC_PASS", "teste")
+ZMQ_HASHTX_ENDPOINT    = os.getenv("ZMQ_HASHTX",    "tcp://127.0.0.1:58332")
+ZMQ_HASHBLOCK_ENDPOINT = os.getenv("ZMQ_HASHBLOCK", "tcp://127.0.0.1:58335")
+
+rpc = BitcoinRPC(BITCOIN_RPC_URL, BITCOIN_RPC_USER, BITCOIN_RPC_PASS)
 
 def start_zmq_listeners():
     context = zmq.Context()
 
     socket_tx = context.socket(zmq.SUB)
-    socket_tx.connect("tcp://127.0.0.1:58332")
+    socket_tx.connect(ZMQ_HASHTX_ENDPOINT)
     socket_tx.setsockopt(zmq.SUBSCRIBE, b"hashtx")
 
     socket_block = context.socket(zmq.SUB)
-    socket_block.connect("tcp://127.0.0.1:58335")
+    socket_block.connect(ZMQ_HASHBLOCK_ENDPOINT)
     socket_block.setsockopt(zmq.SUBSCRIBE, b"hashblock")
 
     def listen_tx():

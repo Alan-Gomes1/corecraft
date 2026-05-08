@@ -1,0 +1,38 @@
+services:
+
+  a2:
+    build:
+      context: ./atividade-2
+    restart: unless-stopped
+    environment:
+      BITCOIN_RPC_URL:  ${A2_BITCOIN_RPC_URL:-http://host.docker.internal:38332}
+      BITCOIN_RPC_USER: ${A2_BITCOIN_RPC_USER:-teste}
+      BITCOIN_RPC_PASS: ${A2_BITCOIN_RPC_PASS:-teste}
+      ZMQ_HASHBLOCK:    ${A2_ZMQ_HASHBLOCK:-tcp://host.docker.internal:18123}
+      ZMQ_HASHTX:       ${A2_ZMQ_HASHTX:-tcp://host.docker.internal:18123}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # acesso ao Bitcoin Core no host
+
+  a3:
+    build:
+      context: ./atividade-3
+    restart: unless-stopped
+    environment:
+      BITCOIN_RPC_URL:  ${A3_BITCOIN_RPC_URL:-http://host.docker.internal:58443}
+      BITCOIN_RPC_USER: ${A3_BITCOIN_RPC_USER:-teste}
+      BITCOIN_RPC_PASS: ${A3_BITCOIN_RPC_PASS:-teste}
+      ZMQ_HASHTX:       ${A3_ZMQ_HASHTX:-tcp://host.docker.internal:58332}
+      ZMQ_HASHBLOCK:    ${A3_ZMQ_HASHBLOCK:-tcp://host.docker.internal:58335}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./deploy/docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - a2
+      - a3

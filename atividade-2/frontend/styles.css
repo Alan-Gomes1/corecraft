@@ -63,6 +63,7 @@ h1{margin:0;font-size:28px;letter-spacing:.2px}
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:14px;
+  align-items:start;
 }
 
 .card{
@@ -91,13 +92,13 @@ h1{margin:0;font-size:28px;letter-spacing:.2px}
 
 .kv{
   display:grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 180px minmax(0,1fr);
   gap:8px 12px;
   align-items:center;
 }
 
 .k{color:var(--muted);font-size:13px}
-.v{font-size:14px}
+.v{font-size:14px;min-width:0;word-break:break-all}
 .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:13px}
 
 .list{
@@ -146,9 +147,17 @@ h1{margin:0;font-size:28px;letter-spacing:.2px}
 
 .muted{color:var(--muted);font-size:13px}
 
+.events-cols{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  align-items:start;
+}
+
 @media (max-width: 860px){
   .grid{grid-template-columns:1fr}
   .span2{grid-column: span 1;}
   .kv{grid-template-columns: 140px 1fr;}
+  .events-cols{grid-template-columns:1fr}
 }
 

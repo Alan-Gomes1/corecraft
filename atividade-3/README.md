@@ -2,6 +2,8 @@
 
 > **CoreCraft** · Mentoria Aula 3
 
+🔗 **Demo em produção:** [corecraft.prod.app.br/a3/](https://corecraft.prod.app.br/a3/)
+
 Implementação da tarefa prática da terceira aula do curso CoreCraft. O objetivo é expandir o monitor de transações adicionando **suporte a múltiplas wallets** do Bitcoin Core e **interpretação semântica do ciclo de vida** de cada transação enviada: desde o broadcast até a confirmação em bloco.
 
 ---

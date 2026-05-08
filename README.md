@@ -34,7 +34,7 @@ Adição do ZeroMQ como canal de streaming. O backend mantém filas em memória 
 
 **Conceito central:** ZMQ notifica que "algo aconteceu", mas não é confirmação — o RPC ainda é a fonte de verdade.
 
-→ [`atividade-2/README.md`](atividade-2/README.md)
+🔗 **Demo:** [corecraft.prod.app.br](https://corecraft.prod.app.br/) · [`atividade-2/README.md`](atividade-2/README.md)
 
 ---
 
@@ -44,7 +44,7 @@ Gerenciamento de múltiplas wallets do Bitcoin Core e construção manual de tra
 
 **Conceito central:** uma transação passa por estados distintos — broadcast ao node, aceitação na mempool e inclusão em bloco — cada um com semântica e garantias diferentes.
 
-→ [`atividade-3/README.md`](atividade-3/README.md)
+🔗 **Demo:** [corecraft.prod.app.br/a3/](https://corecraft.prod.app.br/a3/) · [`atividade-3/README.md`](atividade-3/README.md)
 
 ---
 

@@ -2,6 +2,8 @@
 
 > **CoreCraft** · Mentoria Aula 2
 
+🔗 **Demo em produção:** [corecraft.prod.app.br](https://corecraft.prod.app.br/)
+
 Implementação da tarefa prática da segunda aula do curso CoreCraft. O objetivo é expandir a integração com o node Bitcoin adicionando **ZMQ (ZeroMQ)** como canal de eventos em tempo real, contrastando o modelo de leitura pontual (RPC) com o modelo de streaming de eventos (ZMQ).
 
 ---

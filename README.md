@@ -64,10 +64,9 @@ corecraft-a3        Flask + ZMQ listener + wallet manager
     │
     └── JSON-RPC + ZMQ ──▶ bitcoind (signet, host)
 ```
+<br>
 
-```
-![Arquitetura CoreCraft](/docs/architecture/corecraft-architecture.svg)
-```
+![Arquitetura CoreCraft](docs/architecture/corecraft-architecture.svg)
 
 Todas as atividades a partir da 2 são containerizadas via Docker Compose e acessam o `bitcoind` rodando no host via `host.docker.internal` (ou o IP da bridge Docker configurado no `.env`).
 

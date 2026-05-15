@@ -2,7 +2,11 @@ import os
 import json
 import base64
 from pathlib import Path
+
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class BitcoinRPCError(Exception):
@@ -11,20 +15,15 @@ class BitcoinRPCError(Exception):
 
 class BitcoinRPC:
 	"""
-	Cliente JSON-RPC minimalista.
-	- Usa RPC_USER/RPC_PASS se existir
-	- Senão tenta cookie auth (ideal local)
+	Cliente JSON-RPC.
+	- Usa RPC_USER/RPC_PASS se existir ou tenta cookie auth.
 	"""
 
 	def __init__(self):
 		self.host = os.getenv("RPC_HOST", "127.0.0.1")
 		self.port = int(os.getenv("RPC_PORT", "18113"))
-		self.wallet = os.getenv(
-			"RPC_WALLET", ""
-		).strip()  # opcional, ex: "minha_wallet"
-		self.network = os.getenv(
-			"BTC_NETWORK", "main"
-		).strip()  # main, testnet, regtest, signet
+		self.wallet = os.getenv("RPC_WALLET", "").strip()
+		self.network = os.getenv("BTC_NETWORK", "signet").strip()
 
 		self.user = os.getenv("RPC_USER")
 		self.password = os.getenv("RPC_PASS")
@@ -36,17 +35,26 @@ class BitcoinRPC:
 		self._url = self._build_url()
 
 	def _build_url(self) -> str:
-		# Wallet endpoint é /wallet/<name> (opcional)
+		"""
+		Constrói a URL do endpoint RPC.
+
+		Returns:
+			str: URL do endpoint RPC
+		"""
 		if self.wallet:
 			return f"http://{self.host}:{self.port}/wallet/{self.wallet}"
 		return f"http://{self.host}:{self.port}/"
 
-	def _read_cookie(self):
-		# Descobre caminho padrão do cookie por rede
-		# main: ~/.bitcoin/.cookie
-		# testnet: ~/.bitcoin/testnet3/.cookie
-		# regtest: ~/.bitcoin/regtest/.cookie
-		# signet: ~/.bitcoin/signet/.cookie
+	def _read_cookie(self) -> tuple[str, str]:
+		"""
+		Descobre caminho padrão do cookie por rede e lê credenciais.
+
+		Raises:
+			BitcoinRPCError: Se o cookie não existir ou for inválido.
+
+		Returns:
+			tuple: (user, password)
+		"""
 		base = Path(os.getenv("BTC_DATADIR", str(Path.home() / ".bitcoin")))
 		net = self.network.lower()
 
@@ -63,21 +71,33 @@ class BitcoinRPC:
 
 		if not cookie_path.exists():
 			raise BitcoinRPCError(
-				f"Não achei cookie RPC em {cookie_path}. "
+				f"Cookie RPC não encontrado em {cookie_path}. "
 				"Defina RPC_USER/RPC_PASS ou ajuste BTC_NETWORK/BTC_DATADIR."
 			)
 
 		content = cookie_path.read_text().strip()
-		# formato: user:password
 		if ":" not in content:
 			raise BitcoinRPCError(f"Cookie inválido em {cookie_path}")
-		u, p = content.split(":", 1)
-		return u, p
 
-	def call(self, method: str, params=None) -> dict:
-		if params is None:
-			params = []
+		user, password = content.split(":", 1)
+		return user, password
 
+	def call(self, method: str, params: list[str] = []) -> dict:
+		"""
+		Realiza uma chamada RPC.
+
+		Args:
+			method (str): O método RPC a ser chamado.
+			params (list, optional): Lista de parâmetros para o método RPC.
+   			Defaults to an empty list.
+
+		Raises:
+			BitcoinRPCError: Se ocorrer um erro de rede, HTTP ou se o RPC
+   			retornar um erro.
+
+		Returns:
+			dict: O resultado da chamada RPC.
+		"""
 		payload = {
 			"jsonrpc": "1.0",
 			"id": "corecraft-aula1",
@@ -85,11 +105,11 @@ class BitcoinRPC:
 			"params": params,
 		}
 
-		auth_str = f"{self.user}:{self.password}".encode("utf-8")
-		auth_header = base64.b64encode(auth_str).decode("utf-8")
+		auth = f"{self.user}:{self.password}".encode("utf-8")
+		auth_header = base64.b64encode(auth).decode("utf-8")
 
 		try:
-			r = self._session.post(
+			response = self._session.post(
 				self._url,
 				data=json.dumps(payload),
 				headers={
@@ -98,13 +118,17 @@ class BitcoinRPC:
 				},
 				timeout=10,
 			)
-		except requests.RequestException as e:
-			raise BitcoinRPCError(f"Falha de rede ao chamar RPC: {e}")
+		except requests.RequestException as ex:
+			raise BitcoinRPCError(f"Falha de rede ao chamar RPC: {ex}")
+		except Exception as ex:
+			raise BitcoinRPCError(f"Erro inesperado ao chamar RPC: {ex}")
 
-		if r.status_code != 200:
-			raise BitcoinRPCError(f"RPC HTTP {r.status_code}: {r.text[:200]}")
+		if response.status_code != 200:
+			raise BitcoinRPCError(
+       			f"RPC HTTP {response.status_code}: {response.text[:200]}"
+          )
 
-		data = r.json()
+		data = response.json()
 		if data.get("error"):
 			raise BitcoinRPCError(data["error"])
 

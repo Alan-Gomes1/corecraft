@@ -58,16 +58,13 @@ class BitcoinRPC:
 		base = Path(os.getenv("BTC_DATADIR", str(Path.home() / ".bitcoin")))
 		net = self.network.lower()
 
-		if net == "main":
-			cookie_path = base / ".cookie"
-		elif net == "testnet":
-			cookie_path = base / "testnet3" / ".cookie"
-		elif net == "regtest":
-			cookie_path = base / "regtest" / ".cookie"
-		elif net == "signet":
-			cookie_path = base / "signet" / ".cookie"
-		else:
-			cookie_path = base / ".cookie"
+		cookie_paths = {
+			"main": base / ".cookie",
+			"testnet": base / "testnet3" / ".cookie",
+			"regtest": base / "regtest" / ".cookie",
+			"signet": base / "signet" / ".cookie",
+		}
+		cookie_path = cookie_paths.get(net, base / ".cookie")
 
 		if not cookie_path.exists():
 			raise BitcoinRPCError(

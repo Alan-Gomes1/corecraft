@@ -97,7 +97,7 @@ class BitcoinRPC:
 		"""
 		payload = {
 			"jsonrpc": "1.0",
-			"id": "corecraft-aula1",
+			"id": "corecraft",
 			"method": method,
 			"params": params,
 		}

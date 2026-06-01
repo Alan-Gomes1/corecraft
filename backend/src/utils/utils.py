@@ -1,5 +1,4 @@
 from flask import jsonify
-
 from internal_types import MempoolInfo, PayloadError, RawMempool
 
 SATOSHIS_PER_BTC = 100_000_000

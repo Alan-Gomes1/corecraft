@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 
-import requests
+import niquests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,7 +31,7 @@ class BitcoinRPC:
         if not (self.user and self.password):
             self.user, self.password = self._read_cookie()
 
-        self._session = requests.Session()
+        self._session = niquests.Session()
         self._url = self._build_url()
 
     def _build_url(self) -> str:
@@ -115,7 +115,7 @@ class BitcoinRPC:
                 },
                 timeout=10,
             )
-        except requests.RequestException as ex:
+        except niquests.RequestException as ex:
             raise BitcoinRPCError(f"Falha de rede ao chamar RPC: {ex}") from ex
         except Exception as ex:
             raise BitcoinRPCError(

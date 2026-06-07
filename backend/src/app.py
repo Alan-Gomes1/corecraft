@@ -8,7 +8,7 @@ rpc = BitcoinRPC()
 
 
 @app.get("/api/mempool/summary")
-def api_mempool_summary():
+async def api_mempool_summary():
     """
     Resumo do estado atual da mempool, incluindo:
     - contagem total de transações
@@ -17,8 +17,8 @@ def api_mempool_summary():
     - distribuição de taxas (low/medium/high)
     """
     try:
-        mempool = rpc.call("getmempoolinfo")
-        txs = rpc.call("getrawmempool", [True])
+        mempool = await rpc.call("getmempoolinfo")
+        txs = await rpc.call("getrawmempool", [True])
         data = build_mempool_summary(mempool, txs)
         return data
     except BitcoinRPCError as e:

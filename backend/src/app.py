@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from fastapi import FastAPI
 
 from .services.rpc import BitcoinRPC, BitcoinRPCError
@@ -7,8 +9,8 @@ app = FastAPI()
 rpc = BitcoinRPC()
 
 
-@app.get("/api/mempool/summary")
-async def api_mempool_summary():
+@app.get("/api/mempool/summary", status_code=HTTPStatus.OK)
+async def mempool_summary():
     """
     Resumo do estado atual da mempool, incluindo:
     - contagem total de transações
@@ -22,4 +24,7 @@ async def api_mempool_summary():
         data = build_mempool_summary(mempool, txs)
         return data
     except BitcoinRPCError as e:
-        return {"error": "Falha ao consultar mempool.", "details": str(e)}, 502
+        return {
+            "error": "Falha ao consultar mempool.",
+            "details": str(e),
+        }, HTTPStatus.BAD_GATEWAY

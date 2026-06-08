@@ -31,7 +31,7 @@ class BitcoinRPC:
         if not (self.user and self.password):
             self.user, self.password = self._read_cookie()
 
-        self._session = niquests.Session()
+        self._session = niquests.AsyncSession()
         self._url = self._build_url()
 
     def _build_url(self) -> str:
@@ -79,7 +79,7 @@ class BitcoinRPC:
         user, password = content.split(":", 1)
         return user, password
 
-    def call(self, method: str, params: list[str] | None = None) -> dict:
+    async def call(self, method: str, params: list[str] | None = None) -> dict:
         """
         Realiza uma chamada RPC.
 
@@ -106,7 +106,7 @@ class BitcoinRPC:
         auth_header = base64.b64encode(auth).decode("utf-8")
 
         try:
-            response = self._session.post(
+            response = await self._session.post(
                 self._url,
                 data=json.dumps(payload),
                 headers={

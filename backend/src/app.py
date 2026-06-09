@@ -28,3 +28,22 @@ async def mempool_summary():
             "error": "Falha ao consultar mempool.",
             "details": str(e),
         }, HTTPStatus.BAD_GATEWAY
+
+
+@app.get("/api/blockchain/lag", status_code=HTTPStatus.OK)
+async def blockchain_lag():
+    """
+    Avalia o estado de sincronização do node.
+    """
+    try:
+        block_chain = await rpc.call("getblockchaininfo")
+        blocks = block_chain.get("blocks")
+        headers = block_chain.get("headers")
+        lag = max((headers or 0) - (blocks or 0), 0)
+        data = {"blocks": blocks, "headers": headers, "lag": lag}
+        return data
+    except BitcoinRPCError as e:
+        return {
+            "error": "Falha ao consultar lag da blockchain.",
+            "details": str(e),
+        }, HTTPStatus.BAD_GATEWAY

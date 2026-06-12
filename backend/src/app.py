@@ -10,7 +10,7 @@ rpc = BitcoinRPC()
 
 
 @app.get("/api/node", status_code=HTTPStatus.OK)
-async def api_node():
+async def node():
     """
     Node snapshot:
     - getblockchaininfo (chain, blocks, headers, difficulty, bestblockhash)
@@ -45,6 +45,50 @@ async def api_node():
     except BitcoinRPCError as e:
         return {
             "error": "Falha ao consultar estado do node via RPC.",
+            "details": str(e),
+        }, HTTPStatus.BAD_GATEWAY
+
+
+@app.get("/api/blocks/recent")
+async def blocks_recent(quantity: int = 10):
+    """
+    Lista N blocos recentes com estatísticas simples.
+    Usa:
+      - getblockcount
+      - getblockhash(height)
+      - getblockheader(hash)  (leve)
+      - getblockstats(hash)   (stats úteis)
+    """
+    n = max(1, min(quantity, 25))
+
+    try:
+        tip = int(await rpc.call("getblockcount"))
+        blocks = []
+        for h in range(tip, max(tip - n, -1), -1):
+            block_hash = await rpc.call("getblockhash", [h])
+            header = await rpc.call("getblockheader", [block_hash])
+            stats = await rpc.call("getblockstats", [block_hash])
+
+            blocks.append(
+                {
+                    "height": h,
+                    "hash": block_hash,
+                    "time": header.get("time"),
+                    "mediantime": header.get("mediantime"),
+                    "txs": stats.get("txs"),
+                    "totalfee": stats.get("totalfee"),
+                    "avgfee": stats.get("avgfee"),
+                    "feerate_percentiles": stats.get("feerate_percentiles"),
+                    "avgfeerate": stats.get("avgfeerate"),
+                    "avg_tx_size": stats.get("avgtxsize"),
+                    "total_size": stats.get("total_size"),
+                }
+            )
+
+        return {"tip": tip, "items": blocks}
+    except BitcoinRPCError as e:
+        return {
+            "error": "Falha ao consultar blocos recentes via RPC.",
             "details": str(e),
         }, HTTPStatus.BAD_GATEWAY
 

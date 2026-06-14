@@ -93,6 +93,34 @@ async def blocks_recent(quantity: int = 10):
         }, HTTPStatus.BAD_GATEWAY
 
 
+@app.get("/api/block/{blockhash}", status_code=HTTPStatus.OK)
+async def block(blockhash: str, verbosity: int = 1):
+    """
+    Resumo de um bloco por hash.
+    """
+    try:
+        block = await rpc.call("getblock", [blockhash, verbosity])
+        data = {
+            "hash": block.get("hash"),
+            "height": block.get("height"),
+            "confirmations": block.get("confirmations"),
+            "time": block.get("time"),
+            "nTx": block.get("nTx"),
+            "size": block.get("size"),
+            "weight": block.get("weight"),
+            "version": block.get("version"),
+            "previousblockhash": block.get("previousblockhash"),
+            "nextblockhash": block.get("nextblockhash"),
+            "tx": block.get("tx")[:20],
+        }
+        return data
+    except BitcoinRPCError as e:
+        return {
+            "error": "Falha ao consultar bloco.",
+            "details": str(e),
+        }, HTTPStatus.BAD_GATEWAY
+
+
 @app.get("/api/mempool/summary", status_code=HTTPStatus.OK)
 async def mempool_summary():
     """

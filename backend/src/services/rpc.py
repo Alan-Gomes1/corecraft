@@ -1,7 +1,9 @@
 import base64
 import json
 import os
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 import niquests
 from dotenv import load_dotenv
@@ -79,7 +81,11 @@ class BitcoinRPC:
         user, password = content.split(":", 1)
         return user, password
 
-    async def call(self, method: str, params: list[str] | None = None) -> dict:
+    async def call(
+        self,
+        method: str,
+        params: Sequence[Any] | None = None,
+    ) -> Any:
         """
         Realiza uma chamada RPC.
 

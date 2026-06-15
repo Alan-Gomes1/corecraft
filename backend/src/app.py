@@ -49,7 +49,7 @@ async def node():
         }, HTTPStatus.BAD_GATEWAY
 
 
-@app.get("/api/blocks/recent")
+@app.get("/api/blocks/recent", status_code=HTTPStatus.OK)
 async def blocks_recent(quantity: int = 10):
     """
     Lista N blocos recentes com estatísticas simples.

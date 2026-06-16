@@ -121,6 +121,36 @@ async def block(blockhash: str, verbosity: int = 1):
         }, HTTPStatus.BAD_GATEWAY
 
 
+@app.get("/api/tx/{txid}", status_code=HTTPStatus.OK)
+async def api_tx(txid: str, verbose: bool = True):
+    """
+    Consulta uma transação por txid.
+    """
+    try:
+        tx = await rpc.call("getrawtransaction", [txid, verbose])
+        data = {
+            "txid": tx.get("txid"),
+            "hash": tx.get("hash"),
+            "version": tx.get("version"),
+            "size": tx.get("size"),
+            "vsize": tx.get("vsize"),
+            "weight": tx.get("weight"),
+            "locktime": tx.get("locktime"),
+            "vin": tx.get("vin"),
+            "vout": tx.get("vout"),
+            "confirmations": tx.get("confirmations", 0),
+            "blockhash": tx.get("blockhash"),
+            "time": tx.get("time"),
+            "blocktime": tx.get("blocktime"),
+        }
+        return data
+    except BitcoinRPCError as e:
+        return {
+            "error": "Falha ao consultar transação.",
+            "details": str(e)
+        }, HTTPStatus.BAD_GATEWAY
+
+
 @app.get("/api/mempool/summary", status_code=HTTPStatus.OK)
 async def mempool_summary():
     """

@@ -67,11 +67,22 @@ body {
   Roboto, 'Open Sans', sans-serif;
   font-size: 1.6rem;
   min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
   background-color: var(--bg);
   color: var(--fg);
 }
 
-.nav-bar {
+.main-content {
+  margin-left: 26rem;
+  flex-grow: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+}
+
+.top-bar {
   display: flex;
   justify-content: space-between;
   padding: 20px;
@@ -96,12 +107,186 @@ body {
   color: var(--success);
 }
 
-.nav-btn {
+.top-bar-btns {
   display: flex;
   padding: 0 10px;
   gap: 10px;
 }
 
-.nav-btn>button {
-  padding: 8px
+.action-btn {
+  background-color: var(--surface);
+  border: .1rem solid var(--border);
+  color: var(--fg);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform: all .2s ease;
+}
+
+.action-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--surface-hover);
+}
+
+.action-btn.refresh-btn.spinning i, .action-btn.refresh-btn.spinning svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {transform: rotate(360deg);}
+}
+
+.dashboard-grid {
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.4rem;
+  max-width: 160rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: var(--surface-card);
+  border: .1rem solid var(--border);
+  border-radius: 1.6rem;
+  padding: 2.4rem;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: .3rem;
+  background: transparent;
+  transition: background .3s ease;
+}
+
+.card:hover::before {
+  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.6rem;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: .05rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.card-icon-wrap {
+  width: 3.6rem;
+  height: 3.6rem;
+  background-color: var(--accent-glow);
+  border-radius: .8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.card-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--fg-heading);
+  margin-bottom: .8rem;
+  line-height: 1.2;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  margin-bottom: 1.6rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  border-bottom: .1rem dashed var(--border-light);
+  padding-bottom: .4rem;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 4rem;
+}
+
+.detail-label {
+  color: var(--muted);
+}
+
+.detail-val {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.detail-val.hash {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-footer-desc {
+  font-size: 1.4rem;
+  color: var(--muted);
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  border-top: .1rem solid var(--border-light);
+  padding-top: 1.2rem;
+  margin-top: auto;
+}
+
+.card-footer-desc i, .card-footer-desc svg {
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+}
+
+.span-4 {grid-column: span 4;}
+.span-3 {grid-column: span 3;}
+.span-2 {grid-column: span 2;}
+.span-1 {grid-column: span 1;}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .4rem 1rem;
+  border-radius: .6rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.badge-rpc {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: .1rem solid rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
 }

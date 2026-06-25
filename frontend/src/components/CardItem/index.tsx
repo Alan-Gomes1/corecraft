@@ -6,9 +6,13 @@ const badges = ["signet"];
 
 export default function CardItem({ label, value }: CardItemProps) {
   return (
-    <div className={`detail-item ${value in badges ? "badge badge-rpc" : ""}`}>
+    <div className={"detail-item"}>
       <span className="detail-label">{label}</span>
-      <span className="detail-val badge badge-rpc">{value}</span>
+      <span
+        className={`detail-val ${badges.includes(String(value)) && "badge badge-rpc"}`}
+      >
+        {value}
+      </span>
     </div>
   );
 }

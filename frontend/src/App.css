@@ -290,3 +290,54 @@ body {
   border: .1rem solid rgba(59, 130, 246, 0.2);
   color: #3b82f6;
 }
+
+.compare-box {
+  background: var(--surface-hover);
+  border-radius: .8rem;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  border: .1rem solid var(--border-light);
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-bottom: .6rem;
+  font-weight: 600;
+}
+
+.compare-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  word-break: break-all;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+}
+
+.copy-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: .2rem;
+  border-radius: .4rem;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn:hover {
+  color: var(--accent);
+  background: var(--border-light);
+}
+
+.copy-btn i, .copy-btn svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}

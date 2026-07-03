@@ -1,9 +1,23 @@
-import { Activity, Server, TrendingUp } from "lucide-react";
+import {
+  Activity,
+  CheckCircle2,
+  Copy,
+  HelpCircle,
+  Server,
+  TrendingUp,
+} from "lucide-react";
 import "./App.css";
 import Header from "./components/Header";
 import Card from "./components/Card";
+import { useState } from "react";
+
+interface ToastItem {
+  id: number;
+  message: string;
+}
 
 function App() {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
   const rpcTitle = "ESTADO (RPC)";
   const rpcValue = "307.421";
   const rpcIcon = <Server size={18} />;
@@ -61,6 +75,27 @@ function App() {
       value: "18/06/2026 18:14:18",
     },
   ];
+  const currentBestHash = "000000003ca5486g74r006191Dgdof156";
+
+  const showToast = (message: string) => {
+    console.log(toasts);
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 2800);
+  };
+
+  const handleCopyText = (text: string, description: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        showToast(`${description} copiado para a área de transferência!`);
+      })
+      .catch((err) => {
+        console.error("Erro ao copiar texto: ", err);
+      });
+  };
 
   return (
     <>

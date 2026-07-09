@@ -1,28 +1,37 @@
 import { HelpCircle } from "lucide-react";
-import CardItem from "../CardItem";
 
 type CardProps = {
+  children?: React.ReactNode;
   title: string;
   icon: React.ReactNode;
-  value: string;
-  data: { label: string; value: string | number }[];
+  iconWrapStyle?: { color: string; background: string };
+  value: React.ReactNode;
+  cardValueStyle?: object;
   helper: string;
 };
 
-export default function Card({ title, icon, value, data, helper }: CardProps) {
+export default function Card({
+  children,
+  title,
+  icon,
+  iconWrapStyle,
+  value,
+  cardValueStyle,
+  helper,
+}: CardProps) {
   return (
     <div className="card span-1">
       <div>
         <div className="card-header-row">
           <span className="card-title">{title}</span>
-          <div className="card-icon-wrap">{icon}</div>
+          <div className="card-icon-wrap" style={iconWrapStyle}>
+            {icon}
+          </div>
         </div>
-        <div className="card-value">{value}</div>
-        <div className="card-details">
-          {data.map((item) => (
-            <CardItem key={item.label} label={item.label} value={item.value} />
-          ))}
+        <div className="card-value" style={cardValueStyle}>
+          {value}
         </div>
+        {children}
         <div className="card-footer-desc">
           <HelpCircle size={14} />
           <span>{helper}</span>

@@ -1,15 +1,9 @@
-import {
-  Activity,
-  CheckCircle2,
-  Copy,
-  HelpCircle,
-  Server,
-  TrendingUp,
-} from "lucide-react";
+import { Activity, CheckCircle2, Copy, Server, TrendingUp } from "lucide-react";
 import "./App.css";
 import Header from "./components/Header";
 import Card from "./components/Card";
 import { useState } from "react";
+import CardItem from "./components/CardItem";
 
 interface ToastItem {
   id: number;
@@ -76,6 +70,8 @@ function App() {
     },
   ];
   const currentBestHash = "000000003ca5486g74r006191Dgdof156";
+  const comparisonHelper =
+    "Confronta a melhor cadeia conhecida via RPC com a notificada por ZMQ.";
 
   const showToast = (message: string) => {
     console.log(toasts);
@@ -106,23 +102,50 @@ function App() {
             title={rpcTitle}
             icon={rpcIcon}
             value={rpcValue}
-            data={rpcData}
             helper={rpcHelper}
-          />
+          >
+            <div className="card-details">
+              {rpcData.map((item) => (
+                <CardItem
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                />
+              ))}
+            </div>
+          </Card>
           <Card
             title={zmqTitle}
             icon={zmqIcon}
             value={zmqValue}
-            data={zmqData}
             helper={zmqHelper}
-          />
+          >
+            <div className="card-details">
+              {zmqData.map((item) => (
+                <CardItem
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                />
+              ))}
+            </div>
+          </Card>
           <Card
             title={networkTitle}
             icon={networkIcon}
             value={networkValue}
-            data={networkData}
             helper={networkHelper}
-          />
+          >
+            <div className="card-details">
+              {networkData.map((item) => (
+                <CardItem
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                />
+              ))}
+            </div>
+          </Card>
         </div>
       </main>
     </>

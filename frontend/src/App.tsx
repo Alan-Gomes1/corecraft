@@ -1,9 +1,18 @@
-import { Activity, CheckCircle2, Copy, Server, TrendingUp } from "lucide-react";
+import {
+  Activity,
+  Box,
+  CheckCircle2,
+  Copy,
+  Search,
+  Send,
+  Server,
+  TrendingUp,
+} from "lucide-react";
 import "./App.css";
 import Header from "./components/Header";
-import Card from "./components/Card";
 import { useState } from "react";
-import CardItem from "./components/CardItem";
+import { Card } from "./components/Card/index";
+import { type Item } from "./components/Card/CardDetail";
 
 interface ToastItem {
   id: number;
@@ -12,11 +21,21 @@ interface ToastItem {
 
 function App() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "block" | "tx">("all");
+  const log = {
+    type: "hashblock",
+    hash: "00000003ca0000012",
+    origin: "ZMQ Stream",
+    time: "14/07/2026 18:14:18",
+    confirmed: "Sim",
+  };
+  const filteredLogs = [log, log, log, log, log];
   const rpcTitle = "ESTADO (RPC)";
   const rpcValue = "307.421";
   const rpcIcon = <Server size={18} />;
   const rpcHelper = 'RPC responde "qual o estado agora?". Confirmação ativa.';
-  const rpcData = [
+  const rpcData: Item[] = [
     {
       label: "Rede",
       value: "signet",
@@ -36,7 +55,7 @@ function App() {
   const zmqIcon = <Activity size={18} />;
   const zmqHelper =
     'ZMQ avisa "algo aconteceu". Não é fonte de confirmação final.';
-  const zmqData = [
+  const zmqData: Item[] = [
     {
       label: "Último Bloco",
       value: "00000003ca00000",
@@ -55,7 +74,7 @@ function App() {
   const networkValue = "0.32 tx/s";
   const networkIcon = <TrendingUp size={18} />;
   const networkHelper = "Taxa calculada sobre a janela de eventos recentes.";
-  const networkData = [
+  const networkData: Item[] = [
     {
       label: "Blocos Vistos",
       value: "4.020",
@@ -98,55 +117,31 @@ function App() {
       <main className="main-content">
         <Header />
         <div className="dashboard-grid">
-          <Card
+          <Card.Root
             title={rpcTitle}
             icon={rpcIcon}
             value={rpcValue}
             helper={rpcHelper}
           >
-            <div className="card-details">
-              {rpcData.map((item) => (
-                <CardItem
-                  key={item.label}
-                  label={item.label}
-                  value={item.value}
-                />
-              ))}
-            </div>
-          </Card>
-          <Card
+            <Card.Detail value={rpcData} />
+          </Card.Root>
+          <Card.Root
             title={zmqTitle}
             icon={zmqIcon}
             value={zmqValue}
             helper={zmqHelper}
           >
-            <div className="card-details">
-              {zmqData.map((item) => (
-                <CardItem
-                  key={item.label}
-                  label={item.label}
-                  value={item.value}
-                />
-              ))}
-            </div>
-          </Card>
-          <Card
+            <Card.Detail value={zmqData} />
+          </Card.Root>
+          <Card.Root
             title={networkTitle}
             icon={networkIcon}
             value={networkValue}
             helper={networkHelper}
           >
-            <div className="card-details">
-              {networkData.map((item) => (
-                <CardItem
-                  key={item.label}
-                  label={item.label}
-                  value={item.value}
-                />
-              ))}
-            </div>
-          </Card>
-          <Card
+            <Card.Detail value={networkData} />
+          </Card.Root>
+          <Card.Root
             title="Comparação RPC vs ZMQ"
             icon={<CheckCircle2 size={18} />}
             iconWrapStyle={{
@@ -167,41 +162,140 @@ function App() {
             }
             helper={comparisonHelper}
           >
-            <div className="compare-box" style={{ marginTop: "1.6rem" }}>
-              <div className="compare-header">
-                <span>RPC Best Block Hash</span>
+            <Card.Compare
+              currentBestHash={currentBestHash}
+              handleCopyText={handleCopyText}
+            />
+          </Card.Root>
+        </div>
+
+        <div className="card span-4 logs-card">
+          <div className="logs-header">
+            <div>
+              <h3 style={{ fontSize: "1.3rem", marginBottom: ".4rem" }}>
+                Log de Eventos Recentes
+              </h3>
+              <p style={{ fontSize: "1.2rem", color: "var(--muted)" }}>
+                Eventos de transações e blocos notificados em tempo real
+              </p>
+            </div>
+            <div className="logs-controls">
+              <div className="search-input-wrap">
+                <Search size={16} />
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Buscar por hash..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
-              <div className="compare-value">
-                <span>{currentBestHash}</span>
+              <div className="filter-tabs">
                 <button
-                  className="copy-btn"
-                  onClick={() =>
-                    handleCopyText(currentBestHash, "PRC Best Block Hash")
-                  }
-                  title="Copiar Hash"
+                  className={`filter-tab ${filterType === "all" && "active"}`}
+                  onClick={() => setFilterType("all")}
                 >
-                  <Copy size={14} />
+                  Todos
+                </button>
+                <button
+                  className={`filter-tab ${filterType === "block" && "active"}`}
+                  onClick={() => setFilterType("block")}
+                >
+                  Blocos
+                </button>
+                <button
+                  className={`filter-tab ${filterType === "tx" && "active"}`}
+                  onClick={() => setFilterType("tx")}
+                >
+                  Transações
                 </button>
               </div>
             </div>
-            <div className="compare-box">
-              <div className="compare-header">
-                <span>ZMQ Last See Block</span>
-              </div>
-              <div className="compare-value">
-                <span>{currentBestHash}</span>
-                <button
-                  className="copy-btn"
-                  onClick={() =>
-                    handleCopyText(currentBestHash, "ZMQ Last See Block Hash")
-                  }
-                  title="Copiar Hash"
-                >
-                  <Copy size={14} />
-                </button>
-              </div>
-            </div>
-          </Card>
+          </div>
+          <div className="table-container">
+            <table className="logs-table">
+              <thead>
+                <tr>
+                  <th>Eventos</th>
+                  <th>Origem</th>
+                  <th>Hash / ID do Evento</th>
+                  <th>Data/Hora</th>
+                  <th>Confirmado</th>
+                  <th style={{ textAlign: "right" }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLogs.map((log, idx) => {
+                  const isBlock = log.type === "hashblock";
+                  const badgeClass = isBlock
+                    ? "badge-hashblock"
+                    : "badge-hashtx";
+                  const labelText = isBlock ? "Bloco" : "Transação";
+                  const displayHash = `${log.hash.slice(0, 16)}...${log.hash.slice(-16)}`;
+
+                  return (
+                    <tr key={idx}>
+                      <td>
+                        <span className={`badge ${badgeClass}`}>
+                          {isBlock ? <Box size={12} /> : <Send size={12} />}
+                          {labelText}
+                        </span>
+                      </td>
+                      <td style={{ color: "var(--muted)", fontWeight: 500 }}>
+                        {log.origin}
+                      </td>
+                      <td>
+                        <div className="hash-cell">
+                          <span className="hash-cell-text" title={log.hash}>
+                            {displayHash}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="time-cell">{log.time}</td>
+                      <td>
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: ".6rem",
+                            color: isBlock ? "var(--success)" : "var(--muted)",
+                            fontWeight: 600,
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: ".6rem",
+                              height: ".6rem",
+                              borderRadius: "50%",
+                              backgroundColor: isBlock
+                                ? "var(--success)"
+                                : "var(--muted)",
+                            }}
+                          ></span>
+                          {log.confirmed}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <button
+                          className="action-btn"
+                          style={{
+                            width: "3.2rem",
+                            height: "3.2rem",
+                            display: "inline-flex",
+                            borderRadius: ".6rem",
+                          }}
+                          onClick={() => handleCopyText(log.hash, labelText)}
+                          title="Copiar Hash"
+                        >
+                          <Copy size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
     </>

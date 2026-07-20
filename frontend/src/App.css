@@ -341,3 +341,120 @@ body {
   width: 1.4rem;
   height: 1.4rem;
 }
+
+.logs-card {
+  padding: 2.4rem;
+}
+
+.logs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+}
+
+.logs-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.search-input-wrap {
+  position: relative;
+}
+
+.search-input-wrap i, .search-input-wrap svg {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.search-input {
+  padding: .8rem 1.2rem .8rem 3.6rem;
+  border-radius: .8rem;
+  border: .1rem solid var(--border);
+  background-color: var(--surface);
+  color: var(--fg);
+  font-size: 1.1rem;
+  width: 22rem;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 .2rem var(--accent-glow);
+}
+
+.filter-tabs {
+  display: flex;
+  background: var(--surface-hover);
+  padding: .4rem;
+  border-radius: .8rem;
+  border: .1rem solid var(--border-light);
+}
+
+.filter-tab {
+  padding: .6rem 1.6rem;
+  border-radius: .6rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transform: all 0.2;
+}
+
+.filter-tab.active {
+  background-color: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .05);
+  font-weight: 600;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.logs-table th {
+  padding: 1.4rem 1.6rem;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: .05rem;
+  color: var(--muted);
+  border-bottom: .1rem solid var(--border);
+  font-weight: 700;
+}
+
+.logs-table td {
+  padding: 1.6rem;
+  font-size: 1.1rem;
+  border-bottom: .1rem solid var(--border-light);
+  vertical-align: middle;
+}
+
+.logs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.logs-table tr {
+  transition: background-color 0.15s ease;
+}
+
+.logs-table tr:hover {
+  background-color: var(--surface-hover);
+}

@@ -1,11 +1,32 @@
+import os
 from http import HTTPStatus
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .services.rpc import BitcoinRPC, BitcoinRPCError
 from .utils import build_mempool_summary
 
+load_dotenv()
+
 app = FastAPI()
+
+allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", "*")
+allowed_origins = [
+    origin.strip()
+    for origin in allowed_origins_raw.split(",")
+    if origin.strip()
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials="*" not in allowed_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 rpc = BitcoinRPC()
 
 

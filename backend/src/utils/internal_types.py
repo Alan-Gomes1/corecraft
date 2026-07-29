@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import TypedDict
 
 
@@ -41,3 +42,27 @@ class MempoolInfo(TypedDict):
 class PayloadError(TypedDict):
     ok: bool
     error: dict[str, str | None]
+
+
+class ZMQStatus(TypedDict):
+    last_zmq_ts: float
+    last_seen_blockhash: str
+    last_seen_block_ts: str
+    count_blocks: int
+    count_txs: int
+
+
+@dataclass
+class Event:
+    topic: str
+    value: str
+    ts: float
+
+
+class EventsSnapshot(TypedDict):
+    blocks: list[Event]
+    txs: list[Event]
+    count_blocks: int
+    count_txs: int
+    last_seen_blockhash: str
+    last_senn_block_ts: str

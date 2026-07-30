@@ -225,9 +225,11 @@ body {
 .detail-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 1.4rem;
   border-bottom: .1rem dashed var(--border-light);
   padding-bottom: .4rem;
+  gap: 1.2rem;
 }
 
 .detail-item:last-child {
@@ -237,19 +239,41 @@ body {
 
 .detail-label {
   color: var(--muted);
+  flex-shrink: 0;
 }
 
 .detail-val {
   font-family: 'JetBrains Mono', monospace;
   color: var(--fg);
   font-weight: 500;
+  min-width: 0;
 }
 
 .detail-val.hash {
-  max-width: 12rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-grow: 1;
+  text-align: right;
+  overflow-x: auto;
   white-space: nowrap;
+  display: block;
+  scrollbar-width: thin;
+  padding-bottom: .2rem;
+}
+
+.detail-val.hash::-webkit-scrollbar {
+  height: 4px;
+}
+
+.detail-val.hash::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.detail-val.hash::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: .2rem;
+}
+
+.detail-val.hash::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
 .card-footer-desc {

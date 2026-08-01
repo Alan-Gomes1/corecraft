@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from http import HTTPStatus
 
 from dotenv import load_dotenv
@@ -6,11 +7,34 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .services.rpc import BitcoinRPC, BitcoinRPCError
+from .services.zmq import InMemoryState, ZMQManager
 from .utils import build_mempool_summary
 
 load_dotenv()
 
-app = FastAPI()
+rpc = BitcoinRPC()
+STATE = InMemoryState()
+zmq_manager = ZMQManager()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    zmq_hashblock = os.getenv("ZMQ_HASHBLOCK", "tcp://127.0.0.1:18123")
+    zmq_hashtx = os.getenv("ZMQ_HASHTX", "tcp://127.0.0.1:18123")
+
+    zmq_manager.register_subiscriber(
+        zmq_hashblock, "hashblock", STATE.register_event
+    )
+    zmq_manager.register_subiscriber(
+        zmq_hashtx, "hashtx", STATE.register_event
+    )
+
+    zmq_manager.start_all()
+    yield
+    zmq_manager.stop_all()
+
+
+app = FastAPI(lifespan=lifespan)
 
 allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", "*")
 allowed_origins = [
@@ -26,8 +50,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-rpc = BitcoinRPC()
 
 
 @app.get("/api/node", status_code=HTTPStatus.OK)
@@ -168,7 +190,7 @@ async def api_tx(txid: str, verbose: bool = True):
     except BitcoinRPCError as e:
         return {
             "error": "Falha ao consultar transação.",
-            "details": str(e)
+            "details": str(e),
         }, HTTPStatus.BAD_GATEWAY
 
 

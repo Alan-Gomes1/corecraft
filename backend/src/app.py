@@ -1,4 +1,5 @@
 import os
+import time
 from contextlib import asynccontextmanager
 from http import HTTPStatus
 
@@ -232,3 +233,18 @@ async def blockchain_lag():
             "error": "Falha ao consultar lag da blockchain.",
             "details": str(e),
         }, HTTPStatus.BAD_GATEWAY
+
+
+@app.get("/api/health")
+def health():
+    """
+    Retorna o status do ZMQ e a idade do último evento recebido.
+    """
+    status = STATE.get_zmq_status()
+    now = time.time()
+    last_ts = status["last_zmq_ts"]
+    return {
+        "ok": True,
+        "zmq_last_event_age_s": round(now - last_ts, 3) if last_ts else None,
+        "server_time": now,
+    }

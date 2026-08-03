@@ -248,3 +248,11 @@ def health():
         "zmq_last_event_age_s": round(now - last_ts, 3) if last_ts else None,
         "server_time": now,
     }
+
+
+@app.get("/api/events/latest")
+def events_latest():
+    """
+    Retorna os últimos eventos de bloco e transação recebidos via ZMQ.
+    """
+    return STATE.get_latest_events()

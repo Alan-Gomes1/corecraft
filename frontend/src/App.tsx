@@ -13,6 +13,7 @@ import Header from "./components/Header";
 import { useState } from "react";
 import { Card } from "./components/Card/index";
 import { type Item } from "./components/Card/CardDetail";
+import { useNodeInfo } from "./hooks/useNodeInfo";
 
 interface ToastItem {
   id: number;
@@ -23,6 +24,7 @@ function App() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "block" | "tx">("all");
+  const { rpcData, rpcValue, currentBestHash } = useNodeInfo();
   const log = {
     type: "hashblock",
     hash: "00000003ca0000012",
@@ -32,23 +34,8 @@ function App() {
   };
   const filteredLogs = [log, log, log, log, log];
   const rpcTitle = "ESTADO (RPC)";
-  const rpcValue = "307.421";
   const rpcIcon = <Server size={18} />;
   const rpcHelper = 'RPC responde "qual o estado agora?". Confirmação ativa.';
-  const rpcData: Item[] = [
-    {
-      label: "Rede",
-      value: "signet",
-    },
-    {
-      label: "Mempool Size",
-      value: 52,
-    },
-    {
-      label: "Best Block Hash",
-      value: "000003ca000",
-    },
-  ];
 
   const zmqTitle = "FLUXO (ZMQ)";
   const zmqValue = "4.020";
@@ -88,7 +75,6 @@ function App() {
       value: "18/06/2026 18:14:18",
     },
   ];
-  const currentBestHash = "000000003ca5486g74r006191Dgdof156";
   const comparisonHelper =
     "Confronta a melhor cadeia conhecida via RPC com a notificada por ZMQ.";
 
@@ -297,6 +283,11 @@ function App() {
             </table>
           </div>
         </div>
+
+        <footer className="page-footer">
+          <span>Bitcoin Node Activity Panel • Rede Signet</span>
+          <span>Desenvolvido com foco em performance e minimalismo</span>
+        </footer>
       </main>
     </>
   );

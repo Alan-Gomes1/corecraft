@@ -256,3 +256,29 @@ def events_latest():
     Retorna os últimos eventos de bloco e transação recebidos via ZMQ.
     """
     return STATE.get_latest_events()
+
+
+@app.get("/api/events/summary", status_code=HTTPStatus.OK)
+def events_summary():
+    """
+    Retorna um resumo dos eventos recebidos via ZMQ, incluindo:
+    - quantidade de blocos observados
+    - quantidade de transações observadas
+    - timestamp do último evento
+    - taxa de transações por segundo (calculada a partir dos últimos eventos)
+    """
+    status = STATE.get_zmq_status()
+    txs = STATE.get_txs_for_rate()[0]
+    blocks_observed = status["count_blocks"]
+    txs_observed = status["count_txs"]
+    last_event_time = status["last_zmq_ts"]
+
+    interval = txs[0].ts - txs[-1].ts if len(txs) > 2 else None
+    tx_per_second = round(len(txs) / interval, 2) if interval else None
+    summary = {
+        "blocks_observed": blocks_observed,
+        "txs_observed": txs_observed,
+        "last_event_time": last_event_time,
+        "tx_per_second": tx_per_second,
+    }
+    return summary

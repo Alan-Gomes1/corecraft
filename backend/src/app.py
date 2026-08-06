@@ -282,3 +282,32 @@ def events_summary():
         "tx_per_second": tx_per_second,
     }
     return summary
+
+
+@app.get("/api/events/state-comparison", status_code=HTTPStatus.OK)
+def events_state_comparison():
+    """
+    Compara o último bloco observado via ZMQ com o melhor bloco do node.
+    Retorna:
+    - hash do melhor bloco do node
+    - hash do último bloco observado via ZMQ
+    - se houve divergência entre os dois
+    """
+    try:
+        bestblockhash = rpc.call("getbestblockhash")
+    except BitcoinRPCError as ex:
+        return {
+            "error": "Falha ao consultar RPC para comparação.",
+            "details": str(ex),
+        }, HTTPStatus.BAD_GATEWAY
+
+    last_seen_blockhash = STATE.get_last_seen_blockhash()
+    divergence = None
+    if bestblockhash and last_seen_blockhash:
+        divergence = (bestblockhash != last_seen_blockhash)
+
+    return {
+        "best_block": bestblockhash,
+        "last_seen_block": last_seen_blockhash,
+        "diverged": divergence,
+    }

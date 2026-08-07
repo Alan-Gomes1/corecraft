@@ -25,6 +25,10 @@ class InMemoryState:
         self._last_seen_blockhash = None
         self._last_seen_block_ts = None
 
+    @property
+    def get_last_seen_blockhash(self):
+        return self._last_seen_blockhash
+
     def register_event(self, topic: str, value_hex: str, ts: float) -> None:
         """
         Thread-safe method to register a new ZMQ event and update state.

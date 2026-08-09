@@ -105,7 +105,7 @@ class BitcoinRPC:
             "jsonrpc": "1.0",
             "id": "corecraft",
             "method": method,
-            "params": params if params else [],
+            "params": params or [],
         }
 
         auth = f"{self.user}:{self.password}".encode()
@@ -121,17 +121,13 @@ class BitcoinRPC:
                 },
                 timeout=10,
             )
+            response.raise_for_status()
         except niquests.RequestException as ex:
             raise BitcoinRPCError(f"Falha de rede ao chamar RPC: {ex}") from ex
         except Exception as ex:
             raise BitcoinRPCError(
                 f"Erro inesperado ao chamar RPC: {ex}"
             ) from ex
-
-        if response.status_code != 200:
-            raise BitcoinRPCError(
-                f"RPC HTTP {response.status_code}: {response.text[:200]}"
-            )
 
         data = response.json()
         if data.get("error"):

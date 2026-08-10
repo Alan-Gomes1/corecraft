@@ -285,7 +285,7 @@ def events_summary():
 
 
 @app.get("/api/events/state-comparison", status_code=HTTPStatus.OK)
-def events_state_comparison():
+async def events_state_comparison():
     """
     Compara o último bloco observado via ZMQ com o melhor bloco do node.
     Retorna:
@@ -294,7 +294,7 @@ def events_state_comparison():
     - se houve divergência entre os dois
     """
     try:
-        bestblockhash = rpc.call("getbestblockhash")
+        bestblockhash = await rpc.call("getbestblockhash")
     except BitcoinRPCError as ex:
         return {
             "error": "Falha ao consultar RPC para comparação.",

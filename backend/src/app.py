@@ -304,10 +304,55 @@ async def events_state_comparison():
     last_seen_blockhash = STATE.get_last_seen_blockhash()
     divergence = None
     if bestblockhash and last_seen_blockhash:
-        divergence = (bestblockhash != last_seen_blockhash)
+        divergence = bestblockhash != last_seen_blockhash
 
     return {
         "best_block": bestblockhash,
         "last_seen_block": last_seen_blockhash,
         "diverged": divergence,
+    }
+
+
+@app.get("/api/state")
+async def state():
+    rpc_error = None
+    try:
+        best_block_hash = await rpc.call("getbestblockhash")
+        chain_info = await rpc.get("getblockchaininfo")
+        mempool_info = await rpc.call("getmempoolinfo")
+    except Exception as ex:
+        rpc_error = str(ex)
+
+    status = STATE.get_events_snapshot()
+    last_seen_block_hash = status["last_seen_blockhash"]
+    divergence = False
+    if best_block_hash and last_seen_block_hash:
+        divergence = divergence != last_seen_block_hash
+
+    return {
+        "rpc": {
+            "best_block_hash": best_block_hash,
+            "height": chain_info.get("blocks") or None,
+            "chain": chain_info.get("chain") or None,
+            "mempool_size": mempool_info.get("size") or None,
+            "rpc_error": rpc_error,
+        },
+        "zmq": {
+            "last_seen_block_hash": status["last_seen_blockhash"],
+            "last_seen_block_ts": status["last_seen_block_ts"],
+            "counters": {
+                "block_events": status["count_blocks"],
+                "tx_events": status["count_txs"],
+            },
+            "blocks": status["blocks"],
+            "txs": status["txs"],
+        },
+        "analysis": {
+            "best_block_vs_last_seen_diverged": divergence,
+            "notes": (
+                "Divergência pode ser latência, reorg, out-of-order, "
+                "ou timing do polling."
+            ),
+        },
+        "server_time": time.time(),
     }

@@ -482,3 +482,19 @@ body {
 .logs-table tr:hover {
   background-color: var(--surface-hover);
 }
+
+.page-footer {
+  padding: 3rem;
+  margin-top: auto;
+  border-top: .1rem solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 1.4rem;
+  background: var(--sidebar-bg);
+}
+
+.page-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}

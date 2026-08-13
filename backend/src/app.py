@@ -6,6 +6,7 @@ from http import HTTPStatus
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 from .services.rpc import BitcoinRPC, BitcoinRPCError
 from .services.zmq import InMemoryState, ZMQManager
@@ -250,12 +251,17 @@ def health():
     }
 
 
-@app.get("/api/events/latest")
-def events_latest():
+@app.get("/api/events/stream", status_code=HTTPStatus.OK)
+def events_stream():
     """
     Retorna os últimos eventos de bloco e transação recebidos via ZMQ.
     """
-    return STATE.get_latest_events()
+    content = f"data: {STATE.get_latest_events()}\n\n"
+    return StreamingResponse(
+        content,
+        media_type="text/event-stream",
+        headers={"connection": "keep-alive"},
+    )
 
 
 @app.get("/api/events/summary", status_code=HTTPStatus.OK)

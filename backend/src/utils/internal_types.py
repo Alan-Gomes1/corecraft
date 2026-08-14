@@ -65,4 +65,4 @@ class EventsSnapshot(TypedDict):
     count_blocks: int
     count_txs: int
     last_seen_blockhash: str
-    last_senn_block_ts: str
+    last_seen_block_ts: str

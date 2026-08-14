@@ -8,7 +8,7 @@ from dataclasses import asdict
 
 import zmq
 
-from utils.internal_types import Event, EventsSnapshot, ZMQStatus
+from ..utils.internal_types import Event, EventsSnapshot, ZMQStatus
 
 MAX_BLOCK_EVENTS = int(os.getenv("MAX_BLOCK_EVENTS", "25"))
 MAX_TX_EVENTS = int(os.getenv("MAX_TX_EVENTS", "60"))
@@ -75,7 +75,7 @@ class InMemoryState:
             count_blocks=self._count_blocks,
             count_txs=self._count_txs,
             last_seen_blockhash=self._last_seen_blockhash,
-            last_senn_block_ts=self._last_seen_block_ts,
+            last_seen_block_ts=self._last_seen_block_ts,
         )
         return logs
 

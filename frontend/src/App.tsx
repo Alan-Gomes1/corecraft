@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Card } from "./components/Card/index";
 import { type Item } from "./components/Card/CardDetail";
 import { useNodeInfo } from "./hooks/useNodeInfo";
+import Footer from "./components/Footer";
 
 interface ToastItem {
   id: number;
@@ -284,10 +285,7 @@ function App() {
           </div>
         </div>
 
-        <footer className="page-footer">
-          <span>Bitcoin Node Activity Panel • Rede Signet</span>
-          <span>Desenvolvido com foco em performance e minimalismo</span>
-        </footer>
+        <Footer />
       </main>
     </>
   );

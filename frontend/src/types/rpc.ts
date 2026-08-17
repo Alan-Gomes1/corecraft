@@ -17,3 +17,8 @@ export type NodeInfo = {
     version: number;
   };
 };
+
+export type Events = {
+  blocks: { hash: string; ts: number }[];
+  txs: { txid: string; ts: number }[];
+};

@@ -32,3 +32,12 @@ export type Events = {
   blocks: Block[];
   txs: Transaction[];
 };
+
+export type LogItem = {
+  id: string;
+  type: "block" | "tx";
+  hash: string;
+  ts: number;
+  origin: string;
+  confirmed: boolean;
+};

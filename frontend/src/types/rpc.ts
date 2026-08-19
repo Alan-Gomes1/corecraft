@@ -18,7 +18,17 @@ export type NodeInfo = {
   };
 };
 
+export type Block = {
+  hash: string;
+  ts: number;
+};
+
+export type Transaction = {
+  txid: string;
+  ts: number;
+};
+
 export type Events = {
-  blocks: { hash: string; ts: number }[];
-  txs: { txid: string; ts: number }[];
+  blocks: Block[];
+  txs: Transaction[];
 };

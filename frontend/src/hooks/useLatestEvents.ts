@@ -22,11 +22,15 @@ export default function useLatestEvents(): Events {
     };
 
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setFilteredLogs((prev) => ({
-        blocks: [...(prev.blocks || []), ...(data.blocks || [])],
-        txs: [...(prev.txs || []), ...(data.txs || [])],
-      }));
+      try {
+        const data = JSON.parse(event.data);
+        setFilteredLogs({
+          blocks: data.blocks || [],
+          txs: data.txs || [],
+        });
+      } catch (err) {
+        console.error("Erro ao processar mensagem do SSE:", err);
+      }
     };
 
     return () => {

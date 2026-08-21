@@ -1,3 +1,5 @@
+import asyncio
+import json
 import os
 import time
 from contextlib import asynccontextmanager
@@ -252,15 +254,24 @@ def health():
 
 
 @app.get("/api/events/stream", status_code=HTTPStatus.OK)
-def events_stream():
+async def events_stream():
     """
     Retorna os últimos eventos de bloco e transação recebidos via ZMQ.
     """
-    content = f"data: {STATE.get_latest_events()}\n\n"
+
+    async def event_generator():
+        while True:
+            data = json.dumps(STATE.get_latest_events())
+            yield f"data: {data}\n\n"
+            await asyncio.sleep(2)
+
     return StreamingResponse(
-        content,
+        event_generator(),
         media_type="text/event-stream",
-        headers={"connection": "keep-alive"},
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        },
     )
 
 
@@ -333,7 +344,7 @@ async def state():
     last_seen_block_hash = status["last_seen_blockhash"]
     divergence = False
     if best_block_hash and last_seen_block_hash:
-        divergence = divergence != last_seen_block_hash
+        divergence = best_block_hash != last_seen_block_hash
 
     return {
         "rpc": {

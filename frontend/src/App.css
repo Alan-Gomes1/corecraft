@@ -445,7 +445,10 @@ body {
 
 .table-container {
   overflow-x: auto;
+  overflow-y: auto;
   width: 100%;
+  max-height: 50rem;
+  border: .1rem solid var(--border);
 }
 
 .logs-table {

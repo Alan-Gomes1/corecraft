@@ -41,3 +41,5 @@ export type LogItem = {
   origin: string;
   confirmed: boolean;
 };
+
+export type FilterType = "all" | "block" | "tx";

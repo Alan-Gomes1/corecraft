@@ -1,13 +1,4 @@
-import {
-  Activity,
-  Box,
-  CheckCircle2,
-  Copy,
-  Search,
-  Send,
-  Server,
-  TrendingUp,
-} from "lucide-react";
+import { Activity, CheckCircle2, Server, TrendingUp } from "lucide-react";
 import "./App.css";
 import Header from "./components/Header";
 import { useState } from "react";
@@ -15,6 +6,11 @@ import { Card } from "./components/Card/index";
 import { type Item } from "./components/Card/CardDetail";
 import { useNodeInfo } from "./hooks/useNodeInfo";
 import Footer from "./components/Footer";
+import useLatestEvents from "./hooks/useLatestEvents";
+import type { FilterType } from "./types/rpc";
+import { LogsTable } from "./components/LogsTable";
+import LogsHeader from "./components/LogsHeader";
+import { useLogs } from "./hooks/useLogs";
 
 interface ToastItem {
   id: number;
@@ -24,16 +20,10 @@ interface ToastItem {
 function App() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<"all" | "block" | "tx">("all");
+  const [filterType, setFilterType] = useState<FilterType>("all");
   const { rpcData, rpcValue, currentBestHash } = useNodeInfo();
-  const log = {
-    type: "hashblock",
-    hash: "00000003ca0000012",
-    origin: "ZMQ Stream",
-    time: "14/07/2026 18:14:18",
-    confirmed: "Sim",
-  };
-  const filteredLogs = [log, log, log, log, log];
+  const rawEvents = useLatestEvents();
+  const logs = useLogs(rawEvents, filterType, searchQuery);
   const rpcTitle = "ESTADO (RPC)";
   const rpcIcon = <Server size={18} />;
   const rpcHelper = 'RPC responde "qual o estado agora?". Confirmação ativa.';
@@ -157,132 +147,16 @@ function App() {
         </div>
 
         <div className="card span-4 logs-card">
-          <div className="logs-header">
-            <div>
-              <h3 style={{ fontSize: "1.3rem", marginBottom: ".4rem" }}>
-                Log de Eventos Recentes
-              </h3>
-              <p style={{ fontSize: "1.2rem", color: "var(--muted)" }}>
-                Eventos de transações e blocos notificados em tempo real
-              </p>
-            </div>
-            <div className="logs-controls">
-              <div className="search-input-wrap">
-                <Search size={16} />
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Buscar por hash..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <div className="filter-tabs">
-                <button
-                  className={`filter-tab ${filterType === "all" && "active"}`}
-                  onClick={() => setFilterType("all")}
-                >
-                  Todos
-                </button>
-                <button
-                  className={`filter-tab ${filterType === "block" && "active"}`}
-                  onClick={() => setFilterType("block")}
-                >
-                  Blocos
-                </button>
-                <button
-                  className={`filter-tab ${filterType === "tx" && "active"}`}
-                  onClick={() => setFilterType("tx")}
-                >
-                  Transações
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="table-container">
-            <table className="logs-table">
-              <thead>
-                <tr>
-                  <th>Eventos</th>
-                  <th>Origem</th>
-                  <th>Hash / ID do Evento</th>
-                  <th>Data/Hora</th>
-                  <th>Confirmado</th>
-                  <th style={{ textAlign: "right" }}>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLogs.map((log, idx) => {
-                  const isBlock = log.type === "hashblock";
-                  const badgeClass = isBlock
-                    ? "badge-hashblock"
-                    : "badge-hashtx";
-                  const labelText = isBlock ? "Bloco" : "Transação";
-                  const displayHash = `${log.hash.slice(0, 16)}...${log.hash.slice(-16)}`;
-
-                  return (
-                    <tr key={idx}>
-                      <td>
-                        <span className={`badge ${badgeClass}`}>
-                          {isBlock ? <Box size={12} /> : <Send size={12} />}
-                          {labelText}
-                        </span>
-                      </td>
-                      <td style={{ color: "var(--muted)", fontWeight: 500 }}>
-                        {log.origin}
-                      </td>
-                      <td>
-                        <div className="hash-cell">
-                          <span className="hash-cell-text" title={log.hash}>
-                            {displayHash}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="time-cell">{log.time}</td>
-                      <td>
-                        <span
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: ".6rem",
-                            color: isBlock ? "var(--success)" : "var(--muted)",
-                            fontWeight: 600,
-                          }}
-                        >
-                          <span
-                            style={{
-                              width: ".6rem",
-                              height: ".6rem",
-                              borderRadius: "50%",
-                              backgroundColor: isBlock
-                                ? "var(--success)"
-                                : "var(--muted)",
-                            }}
-                          ></span>
-                          {log.confirmed}
-                        </span>
-                      </td>
-                      <td style={{ textAlign: "right" }}>
-                        <button
-                          className="action-btn"
-                          style={{
-                            width: "3.2rem",
-                            height: "3.2rem",
-                            display: "inline-flex",
-                            borderRadius: ".6rem",
-                          }}
-                          onClick={() => handleCopyText(log.hash, labelText)}
-                          title="Copiar Hash"
-                        >
-                          <Copy size={14} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <LogsHeader
+            searchQuery={searchQuery}
+            filterType={filterType}
+            setSearchQuery={setSearchQuery}
+            setFilterType={setFilterType}
+          />
+          <LogsTable.Root>
+            <LogsTable.Head />
+            <LogsTable.Body logs={logs} onCopy={handleCopyText} />
+          </LogsTable.Root>
         </div>
 
         <Footer />

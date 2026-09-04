@@ -5,37 +5,6 @@ LOW_FEE_RATE = 10
 HIGH_FEE_RATE = 50
 
 
-def ok(data: dict):
-    """
-    Retorna uma resposta JSON de sucesso.
-
-    Args:
-        data (dict): Dados a serem retornados na resposta JSON.
-
-    Returns:
-        Response: Resposta JSON de sucesso.
-    """
-    return jsonify({"ok": True, "data": data})
-
-
-def fail(message: str, details: str | None = None, code: int = 400):
-    """
-    Retorna uma resposta JSON de erro.
-
-    Args:
-        message (str): Mensagem de erro.
-        details (str, optional): Detalhes adicionais do erro.
-        code (int, optional): Código HTTP da resposta.
-
-    Returns:
-        Response: Resposta JSON de erro.
-    """
-    payload: PayloadError = {"ok": False, "error": {"message": message}}
-    if details is not None:
-        payload["error"]["details"] = details
-    return jsonify(payload), code
-
-
 def btc_to_sat_vb(fee_btc: float, vsize: int) -> float:
     """
     Converte uma taxa de fee de BTC para satoshis por vbyte.

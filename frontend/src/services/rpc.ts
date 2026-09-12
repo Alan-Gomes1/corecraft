@@ -1,4 +1,3 @@
-import type { NodeInfo } from "../types/rpc";
 import apiRPC from "./api";
 
 /**
@@ -6,11 +5,13 @@ import apiRPC from "./api";
  */
 export const rpcService = {
   /**
-   * Fetches information about the node from the RPC API.
+   * Fetches information about the RPC API.
+   * 
+   * @param url The endpoint URL.
    * @returns A promise that resolves to the node information.
    */
-  async getNodeInfo(): Promise<NodeInfo> {
-    const response = await apiRPC.get("/node");
+  async getRpcInfo<T>(url: string): Promise<T> {
+    const response = await apiRPC.get<T>(url);
     const data = await response.data;
     return data;
   },

@@ -1,3 +1,8 @@
+export interface ToastItem {
+  id: number;
+  message: string;
+}
+
 export type NodeInfo = {
   chain: string;
   blocks: number;
@@ -43,3 +48,21 @@ export type LogItem = {
 };
 
 export type FilterType = "all" | "block" | "tx";
+
+export type Item = {
+  label: string;
+  value: number;
+};
+
+export type EventsSummary = {
+  blocks_observed: number;
+  txs_observed: number;
+  last_event_time: number;
+  tx_per_second: number;
+};
+
+export type ZMQStatus = {
+  ok: boolean;
+  zmq_last_event_age_s: number;
+  server_time: number;
+};

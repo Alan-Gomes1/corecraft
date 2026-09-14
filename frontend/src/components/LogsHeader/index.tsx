@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import type React from "react";
-import type { FilterType } from "../../types/rpc";
+import type { FilterType } from "../../types";
 
 type LogsHeaderProps = {
   searchQuery: string;

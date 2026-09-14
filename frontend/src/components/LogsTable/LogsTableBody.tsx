@@ -1,5 +1,5 @@
 import { Box, Copy, Send } from "lucide-react";
-import type { LogItem } from "../../types/rpc";
+import type { LogItem } from "../../types";
 import LogsTableBodyEmpty from "./LogsTableBodyEmpty";
 
 type LogsTableBodyProps = {

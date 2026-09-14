@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Item } from "../components/Card/CardDetail";
 import { rpcService } from "../services/rpc";
+import type { NodeInfo } from "../types";
 
 /**
  *  A custom React hook that fetches and provides information about
  * the node's RPC state.
- * 
+ *
  *  It retrieves the current RPC value, RPC data, and the best block hash
  * from the node.
  *
@@ -27,7 +28,7 @@ export function useNodeInfo() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await rpcService.getNodeInfo();
+        const data = await rpcService.getRpcInfo<NodeInfo>("/node");
         if (isMounted) {
           setRpcValue(data.blocks.toString());
           setRpcData([

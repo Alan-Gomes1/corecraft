@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Events } from "../types/rpc";
+import type { Events } from "../types";
 
 /**
  * A custom React hook that connects to a server-sent events (SSE) stream

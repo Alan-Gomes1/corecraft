@@ -1,9 +1,5 @@
+import type { Item } from "../../types";
 import CardItem from "./CardItem";
-
-export type Item = {
-  label: string;
-  value: string | number;
-};
 
 type CardDetailProps = {
   value: Array<Item>;

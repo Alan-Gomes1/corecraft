@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Events, FilterType, LogItem } from "../types/rpc";
+import type { Events, FilterType, LogItem } from "../types";
 
 /**
  * Processes raw events and returns logs filtered by type and search query.

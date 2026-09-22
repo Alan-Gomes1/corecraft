@@ -1,9 +1,33 @@
 import { Moon, RotateCw, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+import type React from "react";
+import { rpcService } from "../../services/rpc";
+import type { ZMQStatus } from "../../types";
 
-export default function Header() {
-  const zmqAge = 7.45;
-  const theme = "dark";
+type HeaderProps = {
+  theme: "dark" | "light";
+  setTheme: React.Dispatch<React.SetStateAction<"dark" | "light">>;
+};
+
+export default function Header({ theme, setTheme }: HeaderProps) {
+  const [zmqAge, setZmqAge] = useState<number>(0);
   const isSpinning = false;
+
+  useEffect(() => {
+    let isMounted = true;
+    rpcService
+      .getRpcInfo<ZMQStatus>("/health")
+      .then((data) => {
+        if (isMounted) {
+          setZmqAge(data.zmq_last_event_age_s);
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <header className="top-bar">
@@ -21,7 +45,13 @@ export default function Header() {
           >
             <RotateCw />
           </button>
-          <button className="action-btn theme-toggle-btn" title="Alternar Tema">
+          <button
+            className="action-btn theme-toggle-btn"
+            title="Alternar Tema"
+            onClick={() =>
+              setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+            }
+          >
             {theme === "dark" ? <Moon /> : <Sun />}
           </button>
         </div>
